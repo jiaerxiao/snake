@@ -6,7 +6,7 @@ import SnakeCore
 struct SnakeMacApp: App {
     @StateObject private var game = GameModel()
     var body: some Scene {
-        WindowGroup("贪吃蛇 · SNAKE") {
+        WindowGroup("贪吃蛇") {
             GameView(game: game)
                 .frame(minWidth: 520, minHeight: 680)
                 .preferredColorScheme(.dark)

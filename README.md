@@ -1,6 +1,6 @@
-# 贪吃蛇 · SnakeMac
+# 贪吃蛇
 
-<img src="Assets/AppIcon-colorful-v3.png" alt="SnakeMac 应用图标" width="128" />
+<img src="Assets/AppIcon-colorful-v3.png" alt="贪吃蛇应用图标" width="128" />
 
 一个使用 SwiftUI 和 SpriteKit 开发的 macOS 原生贪吃蛇小游戏。深色棋盘搭配绿色界面，支持三档速度、键盘控制、暂停继续和本地最高分记录，可离线游玩。
 
@@ -20,7 +20,7 @@
 - Swift 5.9 或更高版本的工具链。
 - Apple Command Line Tools 或 Xcode。
 
-项目使用 Swift Package Manager 管理，没有第三方依赖。构建脚本使用 macOS 自带的 `sips`、`iconutil` 和 `codesign`。
+项目使用 Swift Package Manager 管理，没有第三方依赖。构建脚本使用 AppKit 生成带透明圆角的图标，并使用 macOS 自带的 `iconutil` 和 `codesign` 完成打包。
 
 尚未安装开发工具时，可先执行：
 
@@ -34,10 +34,10 @@ xcode-select --install
 
 ```sh
 ./scripts/build-app.sh
-open dist/SnakeMac.app
+open dist/贪吃蛇.app
 ```
 
-构建完成后，会生成 `dist/SnakeMac.app`，也可以在 Finder 中双击启动。
+构建完成后，会生成 `dist/贪吃蛇.app`，也可以在 Finder 中双击启动。
 
 ### 生成安装包
 
@@ -45,7 +45,7 @@ open dist/SnakeMac.app
 ./scripts/build-dmg.sh
 ```
 
-脚本会重新构建应用，生成 `dist/SnakeMac-1.0.0-<架构>.dmg` 和对应的 `.sha256` 校验文件，并校验应用签名和磁盘映像完整性。打开 DMG 后，将 `SnakeMac.app` 拖入其中的 `Applications` 入口即可安装，再从「应用程序」文件夹启动游戏。安装完成后可推出磁盘映像。
+脚本会重新构建应用，生成 `dist/贪吃蛇-1.0.2-<架构>.dmg` 和对应的 `.sha256` 校验文件，并校验应用签名和磁盘映像完整性。打开 DMG 后，将 `贪吃蛇.app` 拖入其中的 `Applications` 入口即可安装，再从「应用程序」文件夹启动游戏。安装完成后可推出磁盘映像。旧版应用文件名为 `SnakeMac.app`，新版统一为 `贪吃蛇.app`；安装新版后可移除旧版应用及其 Dock 快捷方式，避免重复显示。
 
 安装包包含当前机器架构的应用；例如 `arm64` 版本用于 Apple Silicon Mac。该安装包采用临时签名，尚未进行 Developer ID 签名和 Apple 公证。
 
@@ -132,9 +132,10 @@ Passed 8 game rule checks
 ├── scripts/
 │   ├── build-app.sh                 # 发布构建、图标转换、应用打包及签名
 │   ├── build-dmg.sh                 # 生成拖拽安装 DMG 和 SHA-256 校验文件
+│   ├── prepare-icon.swift           # 为图标添加圆角裁切与透明边距
 │   └── check.sh                     # 编译并运行规则检查
 └── dist/
-    └── SnakeMac.app                 # 本机构建产物，不纳入版本控制
+    └── 贪吃蛇.app                 # 本机构建产物，不纳入版本控制
 ```
 
 `SnakeCore` 独立于界面和渲染，修改玩法时可单独验证。历史图标版本保留在 `Assets/` 中。
@@ -146,7 +147,7 @@ Passed 8 game rule checks
 - 图标源文件：[AppIcon-colorful-v3.png](Assets/AppIcon-colorful-v3.png)
 - 生成提示词：[AppIcon-colorful-v3-prompt.txt](Assets/AppIcon-colorful-v3-prompt.txt)
 
-更换图标时，更新 `scripts/build-app.sh` 中的源图片路径，然后重新构建。脚本会生成 16、32、128、256、512 点及对应 Retina 尺寸，转换为 `Contents/Resources/AppIcon.icns`，并配置 `CFBundleIconFile`。重新启动应用后查看更新效果。
+更换图标时，更新 `scripts/build-app.sh` 中的源图片路径，然后重新构建。脚本先用 `prepare-icon.swift` 对源图应用圆角裁切和透明边距，再生成 16、32、128、256、512 点及对应 Retina 尺寸，转换为 `Contents/Resources/AppIcon.icns`，并配置 `CFBundleIconFile`。macOS 不会自动为 `.icns` 添加圆角，因此必须在每个尺寸中保留透明角。重新启动应用后查看更新效果。
 
 ## 打包说明
 
@@ -155,7 +156,7 @@ Passed 8 game rule checks
 可手动校验应用签名：
 
 ```sh
-codesign --verify --deep --strict dist/SnakeMac.app
+codesign --verify --deep --strict dist/贪吃蛇.app
 ```
 
 `.build/`、`.swiftpm/` 和 `dist/` 均已加入 `.gitignore`，可通过脚本重新生成构建产物。
